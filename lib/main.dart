@@ -109,53 +109,56 @@ class _MyHomePageState extends State<MyHomePage> {
   void _pendulumCalc() {
     _t = 0;
 
-    /*
-      while (_t > timerLimit) {
-        //arm1Angle = arm1Angle + deg2Rad(1);
-        arm1Angle =
-            angle1Calc(arm1Angle, velocity1Calc(arm1Vel, arm1AccCalc()));
-        arm2Angle =
-            angle2Calc(arm2Angle, velocity2Calc(arm1Vel, arm2AccCalc()));
-        print(arm1Angle);
-        _t++;
-      }*/
-
-    while (_t < (1 * 0.00000056) && streamRun == true) {
-      //while (streamRun == true) {
-      //for (int _i = 0; _i < 100; _i++) {
+    if (arm1Touch == true) {
       setState(() {
-        arm1Acc = (-g * (2 * m1 + m2) * math.sin(arm1Angle) -
-                m2 * g * math.sin((arm1Angle - 2 * arm2Angle)) -
-                2 *
-                    math.sin((arm1Angle - arm2Angle)) *
-                    m2 *
-                    ((arm2Vel * arm2Vel) * l2 +
-                        (arm1Vel * arm1Vel) *
-                            math.cos((arm1Angle - arm2Angle)))) /
-            (l1 *
-                (2 * m1 + m2 - m2 * math.cos((2 * arm1Angle - 2 * arm2Angle))));
-
-        arm2Acc = (2 *
-                math.sin((arm1Angle - arm2Angle)) *
-                ((arm1Vel * arm1Vel) * l1 * (m1 + m2) +
-                    g * (m1 + m2) * math.cos(arm1Angle) +
-                    (arm2Vel * arm2Vel) *
-                        l2 *
-                        m2 *
-                        math.cos((arm1Angle - arm2Angle)))) /
-            (l2 *
-                (2 * m1 + m2 - m2 * math.cos((2 * arm1Angle - 2 * arm2Angle))));
-
-        arm1Vel = arm1Vel + arm1Acc * _t;
-        arm1Angle = arm1Angle + arm1Vel * _t;
-        arm2Vel = arm2Vel + arm2Acc * _t;
-        arm2Angle = arm2Angle + arm2Vel * _t;
-
-        //print(arm1Angle);
-
-        _t = _t + (1 * timeScale);
-        //print("Time  $_t");
+        arm1PanUpdate;
       });
+    } else {
+      while (_t < (1 * 0.00000056) && streamRun == true) {
+        //while (streamRun == true) {
+        //for (int _i = 0; _i < 100; _i++) {
+        setState(() {
+          arm1Acc = (-g * (2 * arm1Mass + arm2Mass) * math.sin(arm1Angle) -
+                  arm2Mass * g * math.sin((arm1Angle - 2 * arm2Angle)) -
+                  2 *
+                      math.sin((arm1Angle - arm2Angle)) *
+                      arm2Mass *
+                      ((arm2Vel * arm2Vel) * arm2Length +
+                          (arm1Vel * arm1Vel) *
+                              math.cos((arm1Angle - arm2Angle)))) /
+              (arm1Length *
+                  (2 * arm1Mass +
+                      arm2Mass -
+                      arm2Mass * math.cos((2 * arm1Angle - 2 * arm2Angle))));
+
+          arm2Acc = (2 *
+                  math.sin((arm1Angle - arm2Angle)) *
+                  ((arm1Vel * arm1Vel) * arm1Length * (arm1Mass + arm2Mass) +
+                      g * (arm1Mass + arm2Mass) * math.cos(arm1Angle) +
+                      (arm2Vel * arm2Vel) *
+                          arm2Length *
+                          arm2Mass *
+                          math.cos((arm1Angle - arm2Angle)))) /
+              (arm2Length *
+                  (2 * arm1Mass +
+                      arm2Mass -
+                      arm2Mass * math.cos((2 * arm1Angle - 2 * arm2Angle))));
+
+          arm1Vel = arm1Vel + arm1Acc * _t;
+          arm1Angle = arm1Angle + arm1Vel * _t;
+          arm2Vel = arm2Vel + arm2Acc * _t;
+          arm2Angle = arm2Angle + arm2Vel * _t;
+
+          // print('arm1Angle');
+          // print(rad2Deg(arm1Angle));
+          // print("arm2Angle");
+          // print(rad2Deg(arm2Angle));
+
+          _t = _t + (1 * timeScale);
+
+          //print("Time  $_t");
+        });
+      }
     }
   }
 
@@ -210,77 +213,195 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Stack(
+        clipBehavior: Clip.none,
+        //alignment: Alignment.center,
         children: <Widget>[
           Center(
             child: SizedBox(
-              height: armLengthCalc(3),
-              width: armLengthCalc(3),
+              height: armLengthCalc(3) * 2,
+              width: armLengthCalc(3) * 2,
               child: Center(
-                child: Container(
-                  height: armLengthCalc(3),
-                  //color: Colors.purpleAccent,
-                  child: Stack(children: <Widget>[
-                    Transform.translate(
-                      offset:
-                          Offset((armLengthCalc(3)-armWidthCalc(1))/2, (armLengthCalc(3) - armWidthCalc(1)) / 2),
+                child: Stack(
+                    alignment: Alignment.center,
+
+                    children: <Widget>[
+                  Center(
+                    child: Transform.translate(
+                      offset: Offset(0, armLengthCalc(1) / 2),
                       child: Transform.rotate(
                         angle: arm1Angle,
-                        origin: Offset(
-                            0, -armLengthCalc(1) / 2 - (-armWidthCalc(1) / 2)),
+                        origin: Offset(0, -armLengthCalc(1) / 2),
                         //-80),
                         child: Container(
                           height: armLengthCalc(1),
                           width: armWidthCalc(1),
-                          //color: Colors.deepOrange,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.red,
-                              ),
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(armWidthCalc(1) / 2))),
+                          color: Colors.deepOrange,
+                          // decoration: BoxDecoration(
+                          //     border: Border.all(
+                          //       color: Colors.red,
+                          //     ),
+                          //     borderRadius: BorderRadius.all(
+                          //         Radius.circular(armWidthCalc(1) / 2))),
                         ),
                       ),
                     ),
-                    Transform.translate(
-                      offset: Offset(
-                          //0,0),
-                          -(armLengthCalc(1) - pivotOffsetInArm * 1) *
-                              sin(arm1Angle) + (armLengthCalc(3)-armWidthCalc(1))/2,
-                          (armLengthCalc(1) - pivotOffsetInArm * 1) *
-                                  cos(arm1Angle) +
-                              (armLengthCalc(3) - armWidthCalc(1)) / 2),
-                      child: Transform.rotate(
-                        angle: arm2Angle,
-                        origin: Offset(
-                            0, -armLengthCalc(2) / 2 - (-armWidthCalc(2) / 2)),
-                        //2 * -armWidthCalc(1)),
-                        child: Container(
-                          height: armLengthCalc(2),
-                          width: armWidthCalc(2),
-                          //color: Colors.deepPurpleAccent,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.deepPurpleAccent,
-                              ),
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(armWidthCalc(2) / 2))),
-                        ),
+                  ),
+                  Transform.translate(
+                    offset: Offset(
+                        -(armLengthCalc(1)) * sin(arm1Angle),
+                        (armLengthCalc(1)) * cos(arm1Angle)+armLengthCalc(2)/2),
+                  // -(armLengthCalc(1)) * sin(arm1Angle) + armLengthCalc(3) - armWidthCalc(2)/2,
+                        // (armLengthCalc(1)) * cos(arm1Angle) + armLengthCalc(3)),
+                    child: Transform.rotate(
+                      angle: arm2Angle,
+                      origin:
+                          Offset(0, -armLengthCalc(2)/2),
+                      child: Container(
+                        height: armLengthCalc(2),
+                        width: armWidthCalc(2),
+                        color: Colors.deepPurpleAccent,
+                        // decoration: BoxDecoration(
+                        //     border: Border.all(
+                        //       color: Colors.deepPurpleAccent,
+                        //     ),
+                        //     borderRadius: BorderRadius.all(
+                        //         Radius.circular(armWidthCalc(2) / 2))),
                       ),
                     ),
-                    Center(
-                      child: GestureDetector(
-                        onPanDown: compassRosePanStart,
-                        onPanUpdate: compassRosePan,
-                        child: Container(
-                          width: 200,
-                          //height: 300,
-                          decoration: new BoxDecoration(
-                              shape: BoxShape.circle, color: Colors.green),
-                        ),
-                      ),
-                    )
-                  ]),
-                ),
+                  ),
+
+                  ///Gesture detector stuff under here
+                  // /// GestureDetector for Arm 1
+                  // Center(
+                  //   child: GestureDetector(
+                  //     //TODO: working here. need to get angle to update upon first tap on screen
+                  //     onPanDown: arm1PanStart,
+                  //     onPanUpdate: arm1PanUpdate,
+                  //     onPanEnd: arm1PanEnd,
+                  //     child: Opacity(
+                  //       opacity: 0.5,
+                  //       child: Container(
+                  //         width: (armLengthCalc(1) * 2) ,
+                  //         //height: 300,
+                  //         decoration: new BoxDecoration(
+                  //             shape: BoxShape.circle,
+                  //             color: Colors.greenAccent),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  // Center(
+                  //   child: Transform.rotate(
+                  //     angle: arm1Angle,
+                  //     child: Transform.translate(
+                  //       offset:
+                  //           Offset((armLengthCalc(1) + armWidthCalc(1)) / 2, 0),
+                  //       child: Container(
+                  //         width: armLengthCalc(1),
+                  //         height: armLengthCalc(1) * 2,
+                  //         color: Colors.transparent,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  // Center(
+                  //   child: Transform.rotate(
+                  //     angle: arm1Angle,
+                  //     child: Transform.translate(
+                  //       offset: Offset(
+                  //           -(armLengthCalc(1) + armWidthCalc(1)) / 2, 0),
+                  //       child: Container(
+                  //         width: armLengthCalc(1),
+                  //         height: armLengthCalc(1) * 2,
+                  //         color: Colors.transparent,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  // Center(
+                  //   child: Transform.rotate(
+                  //     angle: arm1Angle,
+                  //     child: Transform.translate(
+                  //       offset: Offset(
+                  //           0, -(armLengthCalc(1)) / 2),
+                  //       child: Container(
+                  //         width: armWidthCalc(1) * 2,
+                  //         height: armLengthCalc(1),
+                  //         color: Colors.transparent,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  //
+                  // /// GestureDetector for Arm 2
+                  // Center(
+                  //   child: GestureDetector(
+                  //     onPanDown: arm1PanStart,
+                  //     onPanUpdate: arm1PanUpdate,
+                  //     onPanEnd: arm1PanEnd,
+                  //     child: Opacity(
+                  //       opacity: 0.5,
+                  //       child: Container(
+                  //         width: arm2OuterGestureLimit()
+                  //         //((armLengthCalc(1) * 2) - armWidthCalc(1)) +
+                  //         //   ((armLengthCalc(2) -armWidthCalc(2))* 2),
+                  //         ,
+                  //         //height: 300,
+                  //            decoration: new BoxDecoration(
+                  //             shape: BoxShape.circle,
+                  //             color: Colors.lightBlueAccent),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  //     Center(
+                  //       child: Transform.translate(
+                  //         offset: Offset(0, armLengthCalc(1) / 2),
+                  //         child: Transform.rotate(
+                  //           angle: arm1Angle,
+                  //           origin: Offset(0, -armLengthCalc(1) / 2),
+                  //           //-80),
+                  //           child: Container(
+                  //             //height: armLengthCalc(1),
+                  //             //width: armWidthCalc(1),
+                  //             //color: Colors.purpleAccent,
+                  //             // decoration: BoxDecoration(
+                  //             //     border: Border.all(
+                  //             //       color: Colors.red,
+                  //             //     ),
+                  //             //     borderRadius: BorderRadius.all(
+                  //             //         Radius.circular(armWidthCalc(1) / 2))),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     Transform.translate(
+                  //       offset: Offset(
+                  //           -(armLengthCalc(1)) * sin(arm1Angle) ,
+                  //           (armLengthCalc(1)) * cos(arm1Angle)+armLengthCalc(2)/2),
+                  //       // -(armLengthCalc(1)) * sin(arm1Angle) + armLengthCalc(3) - armWidthCalc(2)/2,
+                  //       // (armLengthCalc(1)) * cos(arm1Angle) + armLengthCalc(3)),
+                  //       child: Transform.rotate(
+                  //         angle: arm2Angle,
+                  //         origin:
+                  //         Offset(0, -armLengthCalc(2)/2),
+                  //         child: Transform.translate(
+                  //           offset: Offset(armWidthCalc(2),0),
+                  //           child: Container(
+                  //             height: armLengthCalc(2),
+                  //             width: armWidthCalc(2),
+                  //             color: Colors.yellow,
+                  //             // decoration: BoxDecoration(
+                  //             //     border: Border.all(
+                  //             //       color: Colors.deepPurpleAccent,
+                  //             //     ),
+                  //             //     borderRadius: BorderRadius.all(
+                  //             //         Radius.circular(armWidthCalc(2) / 2))),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                ]),
               ),
             ),
           ),
@@ -289,10 +410,18 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Slider(
               min: armLengthSliderMin,
               max: armLengthSliderMax,
-              value: l1,
+              value: arm1Length,
               onChanged: (double value) {
                 setState(() {
-                  l1 = value;
+                  arm1Length = value;
+                  // print('arm1Angle');
+                  // print(rad2Deg(arm1Angle));
+                  // print("arm2Angle");
+                  // print(rad2Deg(arm2Angle));
+                  // print('resultant length');
+                  // print(arm2OuterGestureLimit());
+                  // print('inner circle radius');
+                  // print(armLengthCalc(1));
                 });
               },
             ),
@@ -302,10 +431,10 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Slider(
               min: armLengthSliderMin,
               max: armLengthSliderMax,
-              value: l2,
+              value: arm2Length,
               onChanged: (double value) {
                 setState(() {
-                  l2 = value;
+                  arm2Length = value;
                 });
               },
             ),

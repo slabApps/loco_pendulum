@@ -12,14 +12,14 @@ double arm1VelDefault = 0.4; // m/s
 double arm2AccDefault = 0.0; // m/s2
 double arm2VelDefault = -1.7; // m/s
 double arm1AngleDefault = deg2Rad(120); //
-double arm2AngleDefault = deg2Rad(90); // degrees
+double arm2AngleDefault = deg2Rad(140); // degrees
 double timeCount = 0;
 
 double g = gDefault; // m/s2
-double m1 = m1Default; // kg  arm 1 mass
-double m2 = m2Default; // kg  arm 2 mass
-double l1 = l1Default; // m  arm 1 length
-double l2 = l2Default; // m  arm 2 length
+double arm1Mass = m1Default; // kg  arm 1 mass
+double arm2Mass = m2Default; // kg  arm 2 mass
+double arm1Length = l1Default; // m  arm 1 length
+double arm2Length = l2Default; // m  arm 2 length
 double arm1Acc = arm1AccDefault; // m/s2
 double arm1Vel = arm1VelDefault; // m/s
 double arm2Acc = arm2AccDefault; // m/s2
@@ -46,11 +46,12 @@ double arm2Width = 0.2;
 // double compassRoseTouchOuterRadius = compassRoseTouchOuterDia / 2;
 // Offset compassRoseTouchInnerOffset = Offset(
 //     0, 0); //Offset(compassRoseTouchInnerRadius,compassRoseTouchInnerRadius);
-// Offset compassRoseTouchOuterOffset =
-//    Offset(compassRoseTouchOuterRadius, compassRoseTouchOuterRadius);
-Offset rosePanStartRadialPos = Offset(0, 0);
-double rosePanStartRadialAngle = 0;
-double headingPanStart = 0;
+Offset arm1TouchOfset =
+    Offset(armLengthCalc(1), armLengthCalc(1)*2);
+Offset arm1PanStartRadialPos = Offset(0, 0);
+double arm1PanStartRadialAngle = 0;
+double arm1PanInitial = 0;
+bool arm1Touch = false; // True when a finger is on the screen. Used to stop the stream
 
 double armLengthSliderMin = 0.3;
-double armLengthSliderMax = 2.5;
+double armLengthSliderMax = 1.0;
